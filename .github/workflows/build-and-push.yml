@@ -12,7 +12,15 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: docker/login-action@v3
+      - name: Log in to Runpod registry
+        uses: docker/login-action@v3
+        with:
+          registry: registry.runpod.net
+          username: ${{ secrets.RUNPOD_REGISTRY_USERNAME }}
+          password: ${{ secrets.RUNPOD_REGISTRY_PASSWORD }}
+
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
