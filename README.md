@@ -8,20 +8,40 @@ This image wraps RunPod's vLLM serverless worker image and downloads a model fro
 - Adds: `awscli`
 - Entrypoint: syncs `MODEL_S3_URI` to `MODEL_NAME`, then hands off to the base worker command.
 
-## Required GitHub secrets
+## Recommended deploy path: RunPod GitHub integration
 
-Add these in GitHub:
+Use RunPod's own GitHub integration for this repository. This avoids GitHub Actions needing to log into RunPod's private registry to pull the base worker image.
+
+1. Open RunPod Console → Settings → Connections → GitHub → Connect.
+2. Allow RunPod access to this repository: `maccadoolie/Runpod`.
+3. Open RunPod Console → Serverless → New Endpoint.
+4. Choose `Import Git Repository`.
+5. Select repository: `maccadoolie/Runpod`.
+6. Branch: `main`.
+7. Dockerfile path: `Dockerfile`.
+8. Configure GPU, workers, timeout, and endpoint environment variables below.
+9. Deploy and watch the endpoint `Builds` tab.
+
+RunPod builds the image inside its own builder and can access its own base worker image. GitHub Actions usually cannot pull that private base image unless you have separate RunPod registry credentials.
+
+## Optional GitHub Actions path
+
+The GitHub Actions workflow is manual-only and optional. It exists only if you have working RunPod registry credentials that can pull the private base image from `registry.runpod.net`.
+
+Add these in GitHub if you want to use Actions:
 
 `Settings` → `Secrets and variables` → `Actions` → `New repository secret`
 
-The base vLLM worker image lives in RunPod's registry and requires registry auth during the GitHub Actions build.
+`Settings` → `Secrets and variables` → `Actions` → `New repository secret`
 
-Add these repository secrets:
+Required for GitHub Actions builds:
 
 - `RUNPOD_REGISTRY_USERNAME`
 - `RUNPOD_REGISTRY_PASSWORD`
 
-The workflow pushes the final image to GHCR using GitHub's built-in `GITHUB_TOKEN`.
+If these credentials produce `401 Unauthorized`, do not keep fighting GitHub Actions. Use the recommended RunPod GitHub integration above.
+
+When it works, the workflow pushes the final image to GHCR using GitHub's built-in `GITHUB_TOKEN`.
 
 After the first successful push, make the package visible to RunPod if needed:
 
@@ -54,7 +74,9 @@ Optional if needed by your AWS setup:
 
 - `AWS_SESSION_TOKEN`
 
-## Deploy in RunPod
+## Deploy from a prebuilt GHCR image
+
+Only use this path if the optional GitHub Actions workflow successfully published a GHCR image.
 
 1. Open RunPod Console → Serverless.
 2. Create or edit an endpoint.
