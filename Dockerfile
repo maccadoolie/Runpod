@@ -1,4 +1,4 @@
-FROM registry.runpod.net/runpod-workers-worker-vllm-main-dockerfile:1b3228a2d
+FROM runpod/worker-v1-vllm:v2.22.4
 
 RUN apt-get update && apt-get install -y awscli && rm -rf /var/lib/apt/lists/*
 
