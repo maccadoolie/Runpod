@@ -14,7 +14,14 @@ Add these in GitHub:
 
 `Settings` → `Secrets and variables` → `Actions` → `New repository secret`
 
-No custom repository secrets are required for the default workflow. It pushes to GHCR using GitHub's built-in `GITHUB_TOKEN`.
+The base vLLM worker image lives in RunPod's registry and requires registry auth during the GitHub Actions build.
+
+Add these repository secrets:
+
+- `RUNPOD_REGISTRY_USERNAME`
+- `RUNPOD_REGISTRY_PASSWORD`
+
+The workflow pushes the final image to GHCR using GitHub's built-in `GITHUB_TOKEN`.
 
 After the first successful push, make the package visible to RunPod if needed:
 
