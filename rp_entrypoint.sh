@@ -6,7 +6,8 @@ set -euo pipefail
 : "${AWS_REGION:?AWS_REGION is required (e.g. ap-southeast-2)}"
 
 echo "Syncing model from S3: ${MODEL_S3_URI} -> ${MODEL_NAME}"
-aws s3 sync "$MODEL_S3_URI" "$MODEL_NAME" --region "$AWS_REGION"
+mkdir -p "$MODEL_NAME"
+aws s3 sync "$MODEL_S3_URI" "$MODEL_NAME" --region "$AWS_REGION" --no-progress
 
 echo "Handing off to base vLLM worker CMD..."
 exec "$@"
